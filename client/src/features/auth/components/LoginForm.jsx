@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { Button, Divider, IconButton, InputAdornment, TextField, Typography, Box, Link, Alert, CircularProgress } from '@mui/material';
 import { Apple, Email, Google, Lock, Visibility, VisibilityOff } from '@mui/icons-material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 import { useToggleShowPassword } from '../hooks/useToggleShowPassword.js';
 import { useAuth } from '../hooks/useAuth.js';
 import { loginSchema } from "../schemas/authSchema";
+import { useThemeStore } from '../../../store/useThemeStore.js';
 
 export const LoginForm = () => {
 
@@ -18,12 +19,14 @@ export const LoginForm = () => {
         mutation,
     } = useAuth("/auth/login", loginSchema);
 
-    const isPending = mutation.isPending;
+    const { theme } = useThemeStore();
 
     useEffect(() => {
         if (mutation.isSuccess) {
         }
     }, [mutation.isSuccess]);
+
+    const isPending = mutation.isPending;
 
     return (
         <>

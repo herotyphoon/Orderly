@@ -12,13 +12,15 @@ import { useAuthStore } from './store/useAuthStore.js'
 
 import { Login } from './pages/Login.jsx'
 import { Signup } from './pages/Signup.jsx'
+import { ForgotPassword } from './pages/ForgotPassword.jsx'
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path='/' element={<AuthLayout />}>
-            <Route index element={<Navigate to='login' replace />} />
             <Route path='login' element={<Login />} />
             <Route path='signup' element={<Signup />} />
+            <Route path='forgot-password' element={<ForgotPassword />} />
+            <Route path='*' element={<Navigate to='/login' replace />} />
         </Route>
     )
 )
