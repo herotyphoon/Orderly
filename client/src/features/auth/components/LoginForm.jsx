@@ -6,6 +6,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { useToggleShowPassword } from '../hooks/useToggleShowPassword.js';
 import { useAuth } from '../hooks/useAuth.js';
 import { loginSchema } from "../schemas/authSchema";
+import { useThemeStore } from '../../../store/useThemeStore.js';
 
 export const LoginForm = () => {
 
@@ -18,12 +19,14 @@ export const LoginForm = () => {
         mutation,
     } = useAuth("/auth/login", loginSchema);
 
-    const isPending = mutation.isPending;
+    const { theme } = useThemeStore();
 
     useEffect(() => {
         if (mutation.isSuccess) {
         }
     }, [mutation.isSuccess]);
+
+    const isPending = mutation.isPending;
 
     return (
         <>
@@ -107,7 +110,8 @@ export const LoginForm = () => {
                     />
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
                         <Link
-                            href="/forgot-password"
+                            component={RouterLink}
+                            to="/forgot-password"
                             variant="caption"
                             underline="hover"
                             sx={{ fontWeight: 600, color: 'primary.main' }}
