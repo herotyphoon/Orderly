@@ -1,7 +1,10 @@
+import { useState, useEffect } from 'react';
 import { Grid, Box, Paper } from '@mui/material';
 
 import { SignupForm } from '../features/auth/components/SignupForm.jsx';
 import { SignupBanner } from '../features/auth/components/SignupBanner.jsx';
+import { EmailVerificationPrompt } from '../features/auth/components/EmailVerificationPrompt.jsx';
+import { useResendVerificationEmail } from '../features/auth/hooks/useResendVerificationEmail.js';
 
 import { usePalette } from '../hooks/usePalette.js';
 import { useThemeStore } from '../store/useThemeStore.js';
@@ -10,6 +13,54 @@ export const Signup = () => {
 
     const { theme } = useThemeStore();
     const palette = usePalette();
+
+    const [showVerification, setShowVerification] = useState(false);
+    const [registeredEmail, setRegisteredEmail] = useState('');
+    const [cooldown, setCooldown] = useState(0);
+
+    const mutation = useResendVerificationEmail();
+
+    useEffect(() => {
+        if (cooldown <= 0) return;
+
+        const interval = setInterval(() => {
+            setCooldown(prev => prev - 1);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [cooldown]);
+
+    useEffect(() => {
+        if (!mutation.isSuccess) return;
+
+        const timer = setTimeout(() => {
+            mutation.reset();
+        }, 6000);
+
+        return () => clearTimeout(timer);
+    }, [mutation.isSuccess]);
+
+
+    const handleSignupSuccess = (email) => {
+        setRegisteredEmail(email);
+        setShowVerification(true);
+    };
+
+    const handleBackToSignup = () => {
+        setShowVerification(false);
+        setRegisteredEmail('');
+    };
+
+    const handleResendVerification = () => {
+        if (!registeredEmail || cooldown > 0) return;
+        setCooldown(60);
+
+        mutation.mutate(registeredEmail, {
+            onError: () => {
+                setCooldown(0);
+            }
+        });
+    };
 
     return (
         <Box
@@ -50,7 +101,18 @@ export const Signup = () => {
                                 flexDirection: "column",
                                 gap: 2.5
                             }}>
-                            <SignupForm />
+                            {showVerification ? (
+                                <EmailVerificationPrompt
+                                    onResendCode={handleResendVerification}
+                                    onBackToSignup={handleBackToSignup}
+                                    isResending={mutation.isPending}
+                                    cooldown={cooldown}
+                                    showSuccess={mutation.isSuccess}
+                                    showError={mutation.isError}
+                                />
+                            ) : (
+                                <SignupForm onSuccess={handleSignupSuccess} />
+                            )}
                         </Box>
                     </Grid>
                     <Grid

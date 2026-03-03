@@ -19,8 +19,7 @@ export const ForgotPasswordForm = ({ onSuccess }) => {
     const isLoading = mutation.isPending;
 
     useEffect(() => {
-        if (mutation.isSuccess && mutation.data?.email) {
-            // Call the onSuccess callback with the email
+        if (mutation.isSuccess) {
             if (onSuccess) {
                 onSuccess(getValues("email"));
             }

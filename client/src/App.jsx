@@ -10,6 +10,7 @@ import { AuthLayout } from './layouts/AuthLayout.jsx'
 import { Login } from './pages/Login.jsx'
 import { Signup } from './pages/Signup.jsx'
 import { ForgotPassword } from './pages/ForgotPassword.jsx'
+import { ProfileSetup } from './pages/ProfileSetup.jsx'
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -17,6 +18,7 @@ const router = createBrowserRouter(
             <Route path='login' element={<Login />} />
             <Route path='signup' element={<Signup />} />
             <Route path='forgot-password' element={<ForgotPassword />} />
+            <Route path='setup-profile' element={<ProfileSetup />} />
             <Route path='*' element={<Navigate to='/login' replace />} />
         </Route>
     )

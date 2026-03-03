@@ -62,11 +62,11 @@ export const VerifyCodeForm = ({ email, onSuccess, onBack }) => {
     };
 
     useEffect(() => {
-        if (mutation.isSuccess && mutation.data?.resetToken && onSuccess) {
-            onSuccess(code.join(""), mutation.data.resetToken);
+        if (mutation.isSuccess && onSuccess) {
+            onSuccess(code.join(""));
             reset();
         }
-    }, [mutation.isSuccess]);
+    }, [mutation.isSuccess, onSuccess, code, reset]);
 
     if (!email) return null;
 

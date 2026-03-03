@@ -8,7 +8,7 @@ import { useAuth } from '../hooks/useAuth.js';
 import { signupSchema } from "../schemas/authSchema";
 import { useThemeStore } from '../../../store/useThemeStore.js';
 
-export const SignupForm = () => {
+export const SignupForm = ({ onSuccess }) => {
 
     const [showPassword, toggleShowPassword] = useToggleShowPassword();
 
@@ -21,13 +21,16 @@ export const SignupForm = () => {
 
     useEffect(() => {
         if (mutation.isSuccess) {
-
+            if (onSuccess) {
+                const email = mutation.data.email;
+                onSuccess(email);
+            }
         }
-    }, [mutation.isSuccess]);
-
-    const isPending = mutation.isPending;
+    }, [mutation.isSuccess, mutation.data, onSuccess]);
 
     const { theme } = useThemeStore();
+
+    const isPending = mutation.isPending;
 
     return (
         <>
