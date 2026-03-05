@@ -34,8 +34,8 @@ const COOKIE_BASE = {
  * @param {string} email - User's email address
  * @param {string} password - User's password
  *
- * @returns {200} Signup successful message  -> { message }
- * @returns {201} User created message       -> { message }
+ * @returns {200} Signup successful message  -> { message, email }
+ * @returns {201} User created message       -> { message, email }
  * @returns {400} Validation error           -> { message }
  * @returns {500} Server error               -> { message }
  */
@@ -50,6 +50,7 @@ const signup = async (req, res) => {
     if (existing.rows.length) {
       return res.status(200).json({
         message: "Signup successful. Check email.",
+        email,
       });
     }
 
@@ -91,6 +92,7 @@ const signup = async (req, res) => {
 
     return res.status(201).json({
       message: "Signup successful. Check email.",
+      email,
     });
   } catch (err) {
     console.error("SIGNUP ERROR:", err);
@@ -168,7 +170,7 @@ const setupProfile = async (req, res) => {
  *
  * @param {string} email - User's email address
  *
- * @returns {200} Resend successful message  -> { message }
+ * @returns {200} Resend successful message  -> { message, email }
  * @returns {400} Validation error           -> { message }
  * @returns {429} Too many requests          -> { message }
  * @returns {500} Server error               -> { message }
@@ -180,13 +182,10 @@ const resendVerification = async (req, res) => {
   try {
     const email = req.body.email?.toLowerCase().trim();
 
-    if (!email) {
-      return res.status(400).json({ message: "Email is required" });
-    }
+    if (!email) return res.status(400).json({ message: "Email is required" });
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       return res.status(400).json({ message: "Invalid email format" });
-    }
 
     const userResult = await conn.query(
       "SELECT id, is_email_verified FROM users WHERE email = $1",
@@ -194,23 +193,29 @@ const resendVerification = async (req, res) => {
     );
 
     if (!userResult.rows.length || userResult.rows[0].is_email_verified) {
-      return res.status(200).json({ message: SAFE_MSG });
+      return res.status(200).json({ message: SAFE_MSG, email });
     }
 
     const user = userResult.rows[0];
+
     const key = `resend:${user.id}`;
 
     const ttl = await redis.ttl(key);
+
     if (ttl > 0) {
       return res.status(429).json({
         message: `Please wait ${ttl} seconds before requesting another link.`,
+        ttl,
       });
     }
 
     await redis.set(key, "1", { EX: 60 });
 
     const emailToken = jwt.sign(
-      { userId: user.id, type: "profile_setup" },
+      {
+        userId: user.id,
+        type: "profile_setup",
+      },
       ENV.JWT_EMAIL_SECRET,
       { expiresIn: "1h" },
     );
@@ -220,21 +225,26 @@ const resendVerification = async (req, res) => {
     try {
       await sendMail(
         email,
-        "Welcome to Orderly",
+        "Verify your Orderly account",
         verificationEmailHTML(verifyLink),
       );
     } catch (mailErr) {
-      console.error("RESEND MAIL ERROR:", mailErr);
+      console.error("MAIL ERROR:", mailErr);
+
       await redis.del(key);
-      return res
-        .status(500)
-        .json({ message: "Failed to send email. Please try again." });
+
+      return res.status(500).json({
+        message: "Failed to send email. Please try again.",
+      });
     }
 
     return res.status(200).json({ message: SAFE_MSG });
   } catch (err) {
     console.error("RESEND ERROR:", err);
-    return res.status(500).json({ message: "Something went wrong" });
+
+    return res.status(500).json({
+      message: "Something went wrong",
+    });
   }
 };
 

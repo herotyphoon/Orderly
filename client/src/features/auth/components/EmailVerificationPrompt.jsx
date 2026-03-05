@@ -13,12 +13,14 @@ import {
 } from "@mui/icons-material";
 
 export const EmailVerificationPrompt = ({
+    email,
     onResendCode,
     onBackToSignup,
     isResending = false,
     cooldown = 0,
     showSuccess = false,
-    showError = false
+    showError = false,
+    errorMessage = ""
 }) => {
 
     const canResend = !isResending && cooldown === 0;
@@ -121,6 +123,18 @@ export const EmailVerificationPrompt = ({
                 Check Your Email!
             </Typography>
 
+            {/* show which email */}
+            {email && (
+                <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 2 }}
+                >
+                    We sent a verification link to{" "}
+                    <strong>{email}</strong>
+                </Typography>
+            )}
+
             {showSuccess && (
                 <Alert
                     severity="success"
@@ -144,7 +158,7 @@ export const EmailVerificationPrompt = ({
                     severity="error"
                     sx={{ mb: 3, width: '100%', maxWidth: 450 }}
                 >
-                    Something went wrong. Please try again.
+                    {errorMessage || "Something went wrong. Please try again."}
                 </Alert>
             )}
 
@@ -218,7 +232,7 @@ export const EmailVerificationPrompt = ({
 
                 {onBackToSignup && (
                     <Typography variant="body2" color="text.secondary">
-                        Wrong email?{' '}
+                        Wrong email?{" "}
                         <Link
                             component="button"
                             onClick={onBackToSignup}

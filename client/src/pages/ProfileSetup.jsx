@@ -9,7 +9,6 @@ export const ProfileSetup = () => {
     const navigate = useNavigate();
 
     const token = searchParams.get("token");
-    console.log("Token from URL:", token);
 
     useEffect(() => {
         if (!token) {

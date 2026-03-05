@@ -23,7 +23,6 @@ const validatePassword = (req, res, next) => {
   if (!/[A-Z]/.test(password)) errors.push("an uppercase letter");
   if (!/[a-z]/.test(password)) errors.push("a lowercase letter");
   if (!/[0-9]/.test(password)) errors.push("a number");
-  if (!/[^A-Za-z0-9]/.test(password)) errors.push("a special character");
 
   if (errors.length) {
     return res.status(400).json({
