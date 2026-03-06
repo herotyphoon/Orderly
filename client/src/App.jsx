@@ -19,6 +19,7 @@ const router = createBrowserRouter(
             <Route path='signup' element={<Signup />} />
             <Route path='forgot-password' element={<ForgotPassword />} />
             <Route path='setup-profile' element={<ProfileSetup />} />
+            <Route path="/welcome" element={<WelcomeBuffer />} />
             <Route path='*' element={<Navigate to='/login' replace />} />
         </Route>
     )

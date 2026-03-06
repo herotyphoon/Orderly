@@ -41,6 +41,11 @@ export const useSetupProfile = ({ token }) => {
           try {
             const res = await api.get("/auth/me");
             setUser(res.data.user);
+            setAuthenticated(true);
+            navigate("/welcome", {
+              replace: true,
+              state: { fromProfileSetup: true },
+            });
           } catch {
             console.error("Error fetching user data");
           }

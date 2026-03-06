@@ -65,6 +65,8 @@ export const Signup = () => {
         setShowVerification(false);
         setRegisteredEmail("");
         setCooldown(0);
+        setErrorMessage("");
+        mutation.reset();
         localStorage.removeItem(COOLDOWN_KEY);
     };
 

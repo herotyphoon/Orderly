@@ -23,6 +23,8 @@ const REQUIRED = [
   "JWT_REFRESH_SECRET",
   "JWT_EMAIL_SECRET",
   "FRONTEND_URL",
+  "EMAIL_USER",
+  "EMAIL_PASS",
 ];
 
 for (const key of REQUIRED) {

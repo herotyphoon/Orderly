@@ -1,3 +1,7 @@
+const {
+  ensurePasswordStrength,
+} = require("../../utils/ensurePasswordStrength.js");
+
 /**
  * Middleware: validateSignup
  *

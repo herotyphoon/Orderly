@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from "react-router-dom";
 import { Box, Typography, Container, LinearProgress } from '@mui/material';
 import {
     CheckCircle,
@@ -36,8 +36,16 @@ export const WelcomeBuffer = () => {
     const [step, setStep] = useState(0);
     const [progress, setProgress] = useState(0);
 
+    const location = useLocation();
+
     useEffect(() => {
-        const duration = 5000;
+        if (!location.state?.fromProfileSetup) {
+            navigate("/dashboard", { replace: true });
+        }
+    }, [location, navigate]);
+
+    useEffect(() => {
+        const duration = 6000;
         const interval = 50;
         const increment = (interval / duration) * 100;
 
@@ -192,6 +200,7 @@ export const WelcomeBuffer = () => {
                     <Box sx={{ mb: 6 }}>
                         <LinearProgress
                             variant="determinate"
+                            aria-label="Loading progress"
                             value={progress}
                             sx={{
                                 height: 8,

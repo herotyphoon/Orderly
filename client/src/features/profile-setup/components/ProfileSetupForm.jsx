@@ -1,7 +1,6 @@
 import { Button, TextField, Typography, Box, Alert, CircularProgress, InputAdornment } from '@mui/material';
 import { Person, AutoAwesome } from '@mui/icons-material';
 import { useSetupProfile } from "../hooks/useSetupProfile";
-import { useAuthStore } from "../../../store/useAuthStore.js";
 
 export const ProfileSetupForm = ({ token }) => {
     const {

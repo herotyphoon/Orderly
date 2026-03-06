@@ -11,6 +11,9 @@ export const useAuthMutation = (endpoint) => {
       return data;
     },
     onSuccess: (data) => {
+      if (!data.user) {
+        return;
+      }
       setUser(data.user);
       setAuthenticated(true);
     },

@@ -6,7 +6,6 @@ const cors = require("cors");
 
 const ENV = require("./services/constants.service.js");
 const authRoutes = require("./routes/auth.routes.js");
-const { checkAuth } = require("./middleware/auth.middleware.js");
 
 const app = express();
 
