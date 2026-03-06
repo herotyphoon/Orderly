@@ -87,8 +87,10 @@ export const Signup = () => {
 
                 if (ttl) {
                     setCooldown(ttl);
+                    localStorage.setItem(COOLDOWN_KEY, Date.now() + ttl * 1000);
                 } else {
                     setCooldown(0);
+                    localStorage.removeItem(COOLDOWN_KEY);
                 }
 
                 setErrorMessage(message);

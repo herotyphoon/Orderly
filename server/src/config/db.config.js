@@ -6,4 +6,8 @@ const pool = new Pool({
   connectionString: ENV.DATABASE_URL,
 });
 
+pool.on("error", (err, client) => {
+  console.error("Unexpected idle PostgreSQL client error:", err);
+});
+
 module.exports = { conn: pool };

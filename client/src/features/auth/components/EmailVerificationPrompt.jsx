@@ -24,7 +24,6 @@ export const EmailVerificationPrompt = ({
 }) => {
 
     const canResend = !isResending && cooldown === 0;
-    const countdown = cooldown;
 
     return (
         <Box
@@ -221,7 +220,7 @@ export const EmailVerificationPrompt = ({
                 >
                     {canResend
                         ? 'Resend Verification Email'
-                        : `Resend in ${countdown}s`}
+                        : `Resend in ${cooldown}s`}
                 </Button>
             </Stack>
 

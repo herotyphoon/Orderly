@@ -10,4 +10,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-module.exports = { transporter };
+const verifyMailTransport = async () => {
+  await transporter.verify();
+};
+
+module.exports = { transporter, verifyMailTransport };

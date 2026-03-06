@@ -2,22 +2,23 @@ const jwt = require("jsonwebtoken");
 
 const ENV = require("../services/constants.service.js");
 const { redis } = require("../config/redis.config.js");
+const { parseExpiry } = require("../utils/parseExpiry.js");
 
 const generateAccessToken = (userId) => {
   return jwt.sign({ userId }, ENV.JWT_ACCESS_SECRET, {
-    expiresIn: ENV.ACCESS_EXPIRY,
+    expiresIn: parseExpiry(ENV.ACCESS_EXPIRY),
   });
 };
 
 const generateRefreshToken = (userId) => {
   return jwt.sign({ userId }, ENV.JWT_REFRESH_SECRET, {
-    expiresIn: ENV.REFRESH_EXPIRY,
+    expiresIn: parseExpiry(ENV.REFRESH_EXPIRY),
   });
 };
 
 const storeRefreshToken = async (userId, token) => {
   await redis.set(`refresh:${userId}`, token, {
-    EX: 7 * 24 * 60 * 60,
+    EX: parseExpiry(ENV.REFRESH_EXPIRY),
   });
 };
 
@@ -28,8 +29,8 @@ const verifyRefreshToken = async (token) => {
   return payload;
 };
 
-const blacklistAccessToken = async (token, exp) => {
-  await redis.set(`blacklist:${token}`, "1", { EX: exp });
+const blacklistAccessToken = async (token, ttlSeconds) => {
+  await redis.set(`blacklist:${token}`, "1", { EX: ttlSeconds });
 };
 
 const isBlacklisted = async (token) => {

@@ -380,7 +380,11 @@ const logout = async (req, res) => {
     const token = req.cookies.refreshToken;
     if (token) {
       let payload;
-      payload = jwt.decode(token);
+      try {
+        payload = await verifyRefreshToken(token);
+      } catch (err) {
+        clearAuthCookies(res, COOKIE_BASE);
+      }
 
       if (payload?.userId) {
         redis
@@ -405,7 +409,7 @@ const logout = async (req, res) => {
  *
  * @param {string} email - User's email address
  *
- * @returns {200} Forgot password initiated message -> { message }
+ * @returns {200} Forgot password initiated message -> { message, email }
  * @returns {400} Validation error                  -> { message }
  * @returns {429} Too many requests                 -> { message }
  * @returns {500} Server error                      -> { message }
@@ -442,12 +446,12 @@ const forgotPassword = async (req, res) => {
 
     if (!user.rows.length) {
       await new Promise((r) => setTimeout(r, 200));
-      return res.status(200).json({ message: SAFE_MSG });
+      return res.status(200).json({ message: SAFE_MSG, email });
     }
 
     const userId = user.rows[0].id;
     const code = generateCode();
-    const hashedCode = await bcrypt.hash(code, 10);
+    const hashedCode = await bcrypt.hash(code, ENV.SALT_ROUNDS);
     await conn.query("BEGIN");
     try {
       await conn.query("DELETE FROM password_reset_codes WHERE user_id = $1", [
@@ -478,7 +482,7 @@ const forgotPassword = async (req, res) => {
         .json({ message: "Failed to send reset code. Please try again." });
     }
 
-    return res.status(200).json({ message: SAFE_MSG });
+    return res.status(200).json({ message: SAFE_MSG, email });
   } catch (err) {
     console.error("FORGOT PASSWORD ERROR:", err);
     return res.status(500).json({ message: "Something went wrong" });
@@ -545,7 +549,7 @@ const resendResetCode = async (req, res) => {
     }
 
     const code = generateCode();
-    const hashedCode = await bcrypt.hash(code, 10);
+    const hashedCode = await bcrypt.hash(code, ENV.SALT_ROUNDS);
 
     await conn.query("BEGIN");
     try {
@@ -627,7 +631,7 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ message: "Invalid request" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await bcrypt.hash(password, ENV.SALT_ROUNDS);
 
     await conn.query("BEGIN");
     try {

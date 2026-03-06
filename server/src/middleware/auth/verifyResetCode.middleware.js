@@ -15,8 +15,10 @@ const bcrypt = require("bcrypt");
  */
 const verifyResetCodeMiddleware = async (req, res, next) => {
   try {
-    const email = req.body.email?.toLowerCase().trim();
-    const code = req.body.code?.trim();
+    const { email: rawEmail, code: rawCode } = req.body ?? {};
+    const email =
+      typeof rawEmail === "string" ? rawEmail.toLowerCase().trim() : "";
+    const code = typeof rawCode === "string" ? rawCode.trim() : "";
 
     if (!email || !code) {
       return res.status(400).json({ message: "Email and code are required" });

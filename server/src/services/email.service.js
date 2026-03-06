@@ -3,7 +3,8 @@ const { transporter } = require("../config/mail.config.js");
 
 const sendMail = async (to, subject, html) => {
   await transporter.sendMail({
-    from: `"Orderly"`,
+    name: `"Orderly"`,
+    from: ENV.EMAIL_USER,
     to,
     subject,
     html,

@@ -1,4 +1,4 @@
-import { Box, Paper, Container } from "@mui/material";
+import { Box, Paper, Container, CircularProgress } from "@mui/material";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
@@ -15,6 +15,14 @@ export const ProfileSetup = () => {
             navigate("/signup");
         }
     }, [token, navigate]);
+
+    if (!token) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress color="secondary" size={60} thickness={4} />
+            </Box>
+        );
+    }
 
     return (
         <Box

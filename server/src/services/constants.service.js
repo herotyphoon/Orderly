@@ -16,4 +16,19 @@ const ENV = {
   REFRESH_EXPIRY: "7d",
 };
 
+const REQUIRED = [
+  "DATABASE_URL",
+  "REDIS_URL",
+  "JWT_ACCESS_SECRET",
+  "JWT_REFRESH_SECRET",
+  "JWT_EMAIL_SECRET",
+  "FRONTEND_URL",
+];
+
+for (const key of REQUIRED) {
+  if (!ENV[key]) {
+    throw new Error(`Missing required environment variable: ${key}`);
+  }
+}
+
 module.exports = ENV;

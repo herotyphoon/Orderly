@@ -13,8 +13,10 @@
  */
 
 const validateSignup = (req, res, next) => {
-  const email = req.body.email?.toLowerCase().trim();
-  const { password } = req.body;
+  const { email: rawEmail, password: rawPassword } = req.body ?? {};
+  const email =
+    typeof rawEmail === "string" ? rawEmail.toLowerCase().trim() : "";
+  const password = typeof rawPassword === "string" ? rawPassword : "";
 
   if (!email || !password) {
     return res.status(400).json({ message: "Email and password are required" });
@@ -24,11 +26,7 @@ const validateSignup = (req, res, next) => {
     return res.status(400).json({ message: "Invalid email format" });
   }
 
-  const errors = [];
-  if (password.length < 8) errors.push("at least 8 characters");
-  if (!/[A-Z]/.test(password)) errors.push("an uppercase letter");
-  if (!/[a-z]/.test(password)) errors.push("a lowercase letter");
-  if (!/[0-9]/.test(password)) errors.push("a number");
+  const errors = ensurePasswordStrength(password);
 
   if (errors.length) {
     return res.status(400).json({

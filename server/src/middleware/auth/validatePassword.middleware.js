@@ -1,3 +1,7 @@
+const {
+  ensurePasswordStrength,
+} = require("../../utils/ensurePasswordStrength.js");
+
 /**
  * Middleware: validatePassword
  *
@@ -8,7 +12,7 @@
  * Error Handling:
  * - 400 Bad Request: Missing password or password does not meet complexity requirements.
  *
- * Note: This middleware should be used on the POST /api/auth/register route before the registration controller.
+ * Note: This middleware should be used on the POST /api/auth/reset-password route before the resetPassword controller.
  */
 
 const validatePassword = (req, res, next) => {
@@ -18,11 +22,7 @@ const validatePassword = (req, res, next) => {
     return res.status(400).json({ message: "Password is required" });
   }
 
-  const errors = [];
-  if (password.length < 8) errors.push("at least 8 characters");
-  if (!/[A-Z]/.test(password)) errors.push("an uppercase letter");
-  if (!/[a-z]/.test(password)) errors.push("a lowercase letter");
-  if (!/[0-9]/.test(password)) errors.push("a number");
+  const errors = ensurePasswordStrength(password);
 
   if (errors.length) {
     return res.status(400).json({

@@ -9,7 +9,7 @@ import { api } from "../../../api/api.js";
 
 export const useSetupProfile = ({ token }) => {
   const navigate = useNavigate();
-  const setAuthenticated = useAuthStore((s) => s.setAuthenticated);
+  const { setAuthenticated, setUser } = useAuthStore();
 
   const mutation = useMutation({
     mutationFn: async ({ token, fullName }) => {
@@ -37,9 +37,13 @@ export const useSetupProfile = ({ token }) => {
     mutation.mutate(
       { token, fullName: data.fullName },
       {
-        onSuccess: () => {
-          setAuthenticated(true);
-          navigate("/dashboard");
+        onSuccess: async () => {
+          try {
+            const res = await api.get("/auth/me");
+            setUser(res.data.user);
+          } catch {
+            console.error("Error fetching user data");
+          }
         },
       },
     );

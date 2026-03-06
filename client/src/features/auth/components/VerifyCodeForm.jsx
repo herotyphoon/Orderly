@@ -184,6 +184,7 @@ export const VerifyCodeForm = ({ email, onSuccess, onBack }) => {
                         Didn't receive the code?{" "}
                         <Link
                             component="button"
+                            type="button"
                             underline="hover"
                             sx={{ fontWeight: 600 }}
                             onClick={handleResend}

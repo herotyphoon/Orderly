@@ -1,11 +1,13 @@
+const ENV = require("../services/constants.service.js");
+
 const setAuthCookies = (res, accessToken, refreshToken, COOKIE_BASE) => {
   res.cookie("accessToken", accessToken, {
     ...COOKIE_BASE,
-    maxAge: 15 * 60 * 1000,
+    maxAge: ENV.ACCESS_EXPIRY,
   });
   res.cookie("refreshToken", refreshToken, {
     ...COOKIE_BASE,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: ENV.REFRESH_EXPIRY,
   });
 };
 

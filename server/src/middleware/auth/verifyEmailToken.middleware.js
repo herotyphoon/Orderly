@@ -16,7 +16,8 @@ const ENV = require("../../services/constants.service.js");
  */
 
 const verifyEmailToken = (req, res, next) => {
-  const token = req.body.token?.trim();
+  const token =
+    typeof (req.body ?? {}).token === "string" ? req.body.token.trim() : "";
 
   if (!token) {
     return res.status(400).json({ message: "Token is required" });

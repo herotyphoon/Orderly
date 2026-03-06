@@ -8,38 +8,37 @@ import {
     TrendingUp
 } from '@mui/icons-material';
 
+const steps = [
+    {
+        icon: CheckCircle,
+        label: 'Setting up your workspace',
+        delay: 0
+    },
+    {
+        icon: Dashboard,
+        label: 'Preparing your dashboard',
+        delay: 1500
+    },
+    {
+        icon: AutoAwesome,
+        label: 'Personalizing your experience',
+        delay: 3000
+    },
+    {
+        icon: TrendingUp,
+        label: 'Almost ready...',
+        delay: 4500
+    },
+];
+
 export const WelcomeBuffer = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState(0);
     const [progress, setProgress] = useState(0);
 
-    const steps = [
-        {
-            icon: CheckCircle,
-            label: 'Setting up your workspace',
-            delay: 0
-        },
-        {
-            icon: Dashboard,
-            label: 'Preparing your dashboard',
-            delay: 1500
-        },
-        {
-            icon: AutoAwesome,
-            label: 'Personalizing your experience',
-            delay: 3000
-        },
-        {
-            icon: TrendingUp,
-            label: 'Almost ready...',
-            delay: 4500
-        },
-    ];
-
-    // Progress bar animation
     useEffect(() => {
-        const duration = 5000; // 5 seconds total
-        const interval = 50; // Update every 50ms
+        const duration = 5000;
+        const interval = 50;
         const increment = (interval / duration) * 100;
 
         const timer = setInterval(() => {
@@ -56,13 +55,11 @@ export const WelcomeBuffer = () => {
         return () => clearInterval(timer);
     }, []);
 
-    // Step progression
     useEffect(() => {
         const timers = steps.map((s, index) =>
             setTimeout(() => setStep(index), s.delay)
         );
 
-        // Redirect after all steps complete
         const redirectTimer = setTimeout(() => {
             navigate('/dashboard', { replace: true });
         }, 6000);
@@ -103,7 +100,6 @@ export const WelcomeBuffer = () => {
                         zIndex: 1,
                     }}
                 >
-                    {/* Animated Logo/Icon */}
                     <Box
                         sx={{
                             width: 120,
@@ -158,7 +154,6 @@ export const WelcomeBuffer = () => {
                         </Typography>
                     </Box>
 
-                    {/* Welcome Message */}
                     <Typography
                         variant="h3"
                         fontWeight="700"
@@ -194,7 +189,6 @@ export const WelcomeBuffer = () => {
                         We're preparing everything you need to start organizing like a pro.
                     </Typography>
 
-                    {/* Progress Bar */}
                     <Box sx={{ mb: 6 }}>
                         <LinearProgress
                             variant="determinate"
@@ -219,7 +213,6 @@ export const WelcomeBuffer = () => {
                         </Typography>
                     </Box>
 
-                    {/* Animated Steps */}
                     <Box
                         sx={{
                             display: 'flex',
@@ -283,7 +276,6 @@ export const WelcomeBuffer = () => {
                         })}
                     </Box>
 
-                    {/* Footer message */}
                     <Typography
                         variant="caption"
                         color="text.disabled"

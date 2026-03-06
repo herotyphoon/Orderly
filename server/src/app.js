@@ -14,7 +14,6 @@ app.use(helmet());
 app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
-app.use(checkAuth);
 
 app.use(
   cors({
