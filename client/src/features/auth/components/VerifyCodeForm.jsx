@@ -12,9 +12,11 @@ import {
 import { ArrowBack } from "@mui/icons-material";
 
 import { useVerifyResetCode } from "../hooks/useVerifyResetCode.js";
+import { useResendResetCode } from "../hooks/useResendResetCode.js";
 
 export const VerifyCodeForm = ({ email, onSuccess, onBack }) => {
     const [code, setCode] = useState(["", "", "", "", "", ""]);
+    const [cooldown, setCooldown] = useState(0);
     const inputRefs = useRef([]);
 
     const {
@@ -25,7 +27,40 @@ export const VerifyCodeForm = ({ email, onSuccess, onBack }) => {
         errors,
     } = useVerifyResetCode(email);
 
+    const resendMutation = useResendResetCode();
+
     const isLoading = mutation.isPending;
+
+    useEffect(() => {
+        if (cooldown <= 0) return;
+
+        const interval = setInterval(() => {
+            setCooldown(prev => prev - 1);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [cooldown]);
+
+    useEffect(() => {
+        if (!resendMutation.isSuccess) return;
+
+        const timer = setTimeout(() => {
+            resendMutation.reset();
+        }, 6000);
+
+        return () => clearTimeout(timer);
+    }, [resendMutation.isSuccess]);
+
+    const handleResend = () => {
+        if (!email || cooldown > 0) return;
+        setCooldown(60);
+
+        resendMutation.mutate(email, {
+            onError: () => {
+                setCooldown(0);
+            },
+        });
+    };
 
     const updateCode = (newCode) => {
         setCode(newCode);
@@ -62,11 +97,11 @@ export const VerifyCodeForm = ({ email, onSuccess, onBack }) => {
     };
 
     useEffect(() => {
-        if (mutation.isSuccess && mutation.data?.resetToken && onSuccess) {
-            onSuccess(code.join(""), mutation.data.resetToken);
+        if (mutation.isSuccess && onSuccess) {
+            onSuccess(code.join(""));
             reset();
         }
-    }, [mutation.isSuccess]);
+    }, [mutation.isSuccess, onSuccess, code, reset]);
 
     if (!email) return null;
 
@@ -92,6 +127,19 @@ export const VerifyCodeForm = ({ email, onSuccess, onBack }) => {
                         {mutation.error?.response?.data?.message ||
                             errors.code?.message ||
                             "Invalid code"}
+                    </Alert>
+                )}
+
+                {resendMutation.isSuccess && (
+                    <Alert severity="success">
+                        A new code has been sent to your email.
+                    </Alert>
+                )}
+
+                {resendMutation.isError && (
+                    <Alert severity="error">
+                        {resendMutation.error?.response?.data?.message ||
+                            "Failed to resend code. Please try again."}
                     </Alert>
                 )}
 
@@ -134,8 +182,19 @@ export const VerifyCodeForm = ({ email, onSuccess, onBack }) => {
                 <Box sx={{ textAlign: "center" }}>
                     <Typography variant="body2" color="text.secondary">
                         Didn't receive the code?{" "}
-                        <Link component="button" underline="hover" sx={{ fontWeight: 600 }}>
-                            Resend
+                        <Link
+                            component="button"
+                            type="button"
+                            underline="hover"
+                            sx={{ fontWeight: 600 }}
+                            onClick={handleResend}
+                            disabled={resendMutation.isPending || cooldown > 0}
+                        >
+                            {resendMutation.isPending
+                                ? "Sending…"
+                                : cooldown > 0
+                                    ? `Resend in ${cooldown}s`
+                                    : "Resend"}
                         </Link>
                     </Typography>
                 </Box>

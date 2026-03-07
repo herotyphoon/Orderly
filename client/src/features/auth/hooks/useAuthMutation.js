@@ -3,7 +3,7 @@ import { api } from "../../../api/api.js";
 import { useAuthStore } from "../../../store/useAuthStore.js";
 
 export const useAuthMutation = (endpoint) => {
-  const { setUser } = useAuthStore();
+  const { setUser, setAuthenticated } = useAuthStore();
 
   return useMutation({
     mutationFn: async (values) => {
@@ -11,7 +11,11 @@ export const useAuthMutation = (endpoint) => {
       return data;
     },
     onSuccess: (data) => {
+      if (!data.user) {
+        return;
+      }
       setUser(data.user);
+      setAuthenticated(true);
     },
   });
 };

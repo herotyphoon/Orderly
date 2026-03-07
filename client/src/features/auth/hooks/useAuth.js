@@ -6,7 +6,7 @@ import { useAuthMutation } from "./useAuthMutation.js";
 export const useAuth = (endpoint, schema) => {
   const mutation = useAuthMutation(endpoint);
 
-  const { register, handleSubmit, formState, reset } = useForm({
+  const { register, handleSubmit, formState } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       email: "",

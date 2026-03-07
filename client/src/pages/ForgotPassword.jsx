@@ -10,16 +10,14 @@ export const ForgotPassword = () => {
     const [step, setStep] = useState(1);
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
-    const [resetToken, setResetToken] = useState('');
 
     const handleEmailSubmitted = (submittedEmail) => {
         setEmail(submittedEmail);
         setStep(2);
     };
 
-    const handleCodeVerified = (verifiedCode, token) => {
+    const handleCodeVerified = (verifiedCode) => {
         setCode(verifiedCode);
-        setResetToken(token);
         setStep(3);
     };
 
@@ -82,7 +80,6 @@ export const ForgotPassword = () => {
                             <ResetPasswordForm
                                 email={email}
                                 code={code}
-                                resetToken={resetToken}
                                 onSuccess={handlePasswordReset}
                                 onBack={handleBackToCode}
                             />
