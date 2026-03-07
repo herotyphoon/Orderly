@@ -3,7 +3,7 @@ const app = require("./src/app.js");
 const { verifyMailTransport } = require("./src/config/mail.config.js");
 const { connectRedis } = require("./src/config/redis.config.js");
 
-const PORT = ENV.PORT;
+const PORT = Number(ENV.PORT);
 
 const start = async () => {
   try {

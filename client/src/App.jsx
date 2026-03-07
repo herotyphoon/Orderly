@@ -11,6 +11,7 @@ import { Login } from './pages/Login.jsx'
 import { Signup } from './pages/Signup.jsx'
 import { ForgotPassword } from './pages/ForgotPassword.jsx'
 import { ProfileSetup } from './pages/ProfileSetup.jsx'
+import { WelcomeBuffer } from './pages/WelcomeBuffer.jsx'
 
 const router = createBrowserRouter(
     createRoutesFromElements(
